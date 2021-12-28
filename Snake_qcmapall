@@ -48,19 +48,13 @@ SAMPLES, PAIRS, RUN, = pullwildcardsbyopt(strucfile, hoo)
 assert len(set(RUN)) == 1, "CHECK CODE ! {run} suffix is not a constant, never tested before"
 assert len(sorted(set(PAIRS))) == 2, "Error!! PAIRS list must be length 2, and ordered"
 
-#TESTWILDCARDS = glob_wildcards(os.path.join(hoo,'{saname}.fastq.gz'))
-#LELE = 	expand(hoo+"{sample}.{pair}.fq.gz.out", sample=SAMPLES, pair=PAIRS)
-#print(LELE) # this lists all output files
-
 RUN = listOneelemTostrdesired(strucfile, RUN)
-dirkeke="keke/"
-filemignon="mignon.txt"
-fullmignon=hoo+dirkeke+filemignon
+
+
 rule all:
     input:
         expand(config['trimmfqdir']+"{sample}_trimm_{pair}.fastq.gz", sample=SAMPLES, pair=PAIRS),
-        expand(config['qc_rappdir']+"{sample}/fastp.{exten}", sample=SAMPLES, exten=['html','json']),
-        expand(hoo+"keke/"+"{sample}"+".logo.txt", sample=SAMPLES)
+        expand(config['qc_rappdir']+"{sample}/fastp.{exten}", sample=SAMPLES, exten=['html','json'])
 
 
 rule fastp:
@@ -74,5 +68,10 @@ rule fastp:
         ojson = config['qc_rappdir']+"{sample}/fastp.json"
     message :
         "    **    processing {wildcards.sample}    **    "
+    params:
+        thr_p = config['fastp']['threads']
     shell:
-        "touch {output.trimm1}; touch {output.trimm2}; touch {output.ohtml}; touch {output.ojson}"
+        "fastp --detect_adapter_for_pe -w {params.thr_p} \
+              -i {input.reads1} -I {input.reads2} \
+              -o {output.trimm1} -O {output.trimm2} \
+              --html {output.ohtml} --json {output.ojson}"
