@@ -1,2 +1,2 @@
-snakemake --dag --snakefile Snake_doindex --configfile ../cocultureProj/config_doindex.yaml --cores 1 | dot -Tpdf > indexDAG.pdf
+snakemake --dag --snakefile Snake_doindex.smk --configfile ../cocultureProj/config_doindex.yaml --cores 1 | dot -Tpdf > indexDAG.pdf
 
