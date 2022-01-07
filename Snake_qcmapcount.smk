@@ -84,16 +84,20 @@ rule fastp:
     message :
         "    **    processing {wildcards.sample}    **    "
     params:
-        thr_p = config['fastp']['threads']
+        thr_p = config['fastp']['threads'],
+        minqual = config['fastp']['minqual']
     shell:
         "fastp --detect_adapter_for_pe -w {params.thr_p} \
+              --qualified_quality_phred {params.minqual} \
               -i {input.reads1} -I {input.reads2} \
               -o {output.trimm1} -O {output.trimm2} \
               --html {output.ohtml} --json {output.ojson}"
 
 rule multiqc:
+    input : 
+        trimmedfiles = expand(config['trimmfqdir']+"{sample}_trimm_{pair}.fastq.gz", sample=SAMPLES, pair=PAIRS)
     output:
-        config['qc_reportsdir']+"multiqc_fastp/multiqc_report.html"
+        qcreport = config['qc_reportsdir']+"multiqc_fastp/multiqc_report.html"
     params:
         indir = config['qc_reportsdir'],
         odir = config['qc_reportsdir']+"multiqc_fastp/"
@@ -101,7 +105,9 @@ rule multiqc:
         "multiqc -f --outdir {params.odir} {params.indir}"
 
 
-rule infomap_species1:
+rule checkpoint_species1:
+    input : 
+       qcreport = rules.multiqc.output.qcreport
     message : sp1message
     output:
         finf = config['prep4mapdir']+"infosspecies-"+species1+".txt"
@@ -111,7 +117,10 @@ rule infomap_species1:
 
 
 if species2 is not None:
-    rule infomap_species2:
+    rule checkpoint_species2:
+        input :
+            qcreport = rules.multiqc.output.qcreport
+            #config['qc_reportsdir']+"multiqc_fastp/mutiqc_report.html"
         message : sp2message
         output :
             finf = config['prep4mapdir']+"infosspecies-"+species2+".txt"
@@ -122,6 +131,7 @@ if species2 is not None:
 
 rule mapping_species1:
     input:
+        rules.checkpoint_species1.output.finf,
         t1 = config['trimmfqdir']+"{sa_spe1}_trimm_"+PAIRS[0]+".fastq.gz",
         t2 = config['trimmfqdir']+"{sa_spe1}_trimm_"+PAIRS[1]+".fastq.gz",
         gtf = config['gtf'][species1]

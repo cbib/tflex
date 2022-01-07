@@ -1,0 +1,10 @@
+# DAGs figures are generated as follows:
+
+module load snakemake
+
+snakemake --dag --snakefile Snake_doindex.smk --configfile ../cocultureProj/config_doindex.yaml --cores 1 | dot -Tpdf > fig1_DAG.pdf
+
+snakemake --dag --snakefile Snake_qcmapcount.smk --configfile ../cocultureProj/src1/config_qcmapall.yaml --cores 1 | dot -Tpdf > fig2_DAG.pdf
+
+snakemake --rulegraph --snakefile Snake_qcmapcount.smk --configfile ../cocultureProj/src1/config_qcmapall.yaml --cores 1 | dot -Tpdf > fig3_DAG.pdf
+
