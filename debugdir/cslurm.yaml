@@ -1,0 +1,8 @@
+__default__ :
+    account : jgalvis
+    partition : "defq"
+    time : "00:10:00"
+    nodes : 1
+    chdir : "/home/jgalvis/tflex/debugdir/slurm_output/"
+    output : "job-%j.out"
+    error : "job-%j.err"

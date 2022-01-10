@@ -1,0 +1,2 @@
+snakemake -s Sn_test.smk -j 100 --dryrun --cores 1 --cluster-config cslurm.yaml --cluster "sbatch -A {cluster.account} -t {cluster.time} -p {cluster.partition} -n {cluster.nodes}" --latency-wait=15
+

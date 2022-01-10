@@ -1,4 +1,4 @@
-# @author : johaGL
+
 
 import os
 #import pandas as pd
@@ -37,9 +37,9 @@ RUN = listtostr_single(strucfile, RUN) # string, function has assert part
 
 
 species1 = config['species'][0]
-bspeci = None
+species2 = None
 if len(config['species']) == 2: # this version supports max 2 species
-    bspeci = config['species'][1]
+    species2 = config['species'][1]
 
 #xixo = pd.read_csv(config['metadata'])
 #print(xixo.shape)
@@ -47,9 +47,8 @@ if len(config['species']) == 2: # this version supports max 2 species
 dicosp = d2o(config['metadata'], config['species'])
 
 SPECIES1 = dicosp[species1] # list of samples this species
-BSPECI = dicosp[bspeci] # list of samples this other species
-
-EALF = ["Aligned.out.sam",  "Log.final.out",  "Log.out",  "Log.progress.out", "ReadsPerGene.out.tab",  "SJ.out.tab"]
+SPECIES2 = dicosp[species2] # list of samples this other species
+EOSAM = ["Aligned.out.sam",  "Log.final.out",  "Log.out",  "Log.progress.out", "ReadsPerGene.out.tab",  "SJ.out.tab"]
 def prepmapinfo(x,y, config):
    """x : dictionary,  y : species, config : configuration dictionary"""
    return "Preparing for Mapping, the number of samples is: "+str(len(x[y]))+\
@@ -57,26 +56,24 @@ def prepmapinfo(x,y, config):
           "STARindex: "+config["starindexdir"][y]
 
 sp1message = prepmapinfo(dicosp, species1, config)
-sp2message = prepmapinfo(dicosp, bspeci, config)
+sp2message = prepmapinfo(dicosp, species2, config)
 
-cangotwo = False
 
 ##########  RULES
 
 rule all:
     input:
-        expand(config['trimmfqdir']+"{sample}_trimm_{pair}.fastq.gz", sample=SAMPLES, pair=PAIRS),
+        # expand(config['trimmfqdir']+"{sample}_trimm_{pair}.fastq.gz", sample=SAMPLES, pair=PAIRS),
         expand(config['qc_reportsdir']+"{sample}/fastp.{exten}", sample=SAMPLES, exten=['html','json']),
         config['qc_reportsdir']+"multiqc_fastp/multiqc_report.html",
         expand(config['trimmfqdir']+"{sa_spe1}_trimm_{pair}.fastq.gz", sa_spe1=SPECIES1, pair=PAIRS), 
-        expand(config['mappeddir']+"{sa_spe1}/{ealf}", sa_spe1=SPECIES1, ealf=EALF ),
         expand(config['prep4mapdir']+"infosspecies-{sp}.txt", sp=config['species']),
-       
-        expand(config['trimmfqdir']+"{spe2_sa}_trimm_{pair}.fastq.gz", spe2_sa=BSPECI, pair=PAIRS),
-        expand(config['mappeddir']+"{spe2_sa}/{ealf}", spe2_sa=BSPECI, ealf=EALF) ,
-        expand(config['prep4mapdir']+"{spe2_sa}/check", spe2_sa=BSPECI)
-        #,expand(config["mappeddir"]+"{spe2_sa}/nonono.txt", spe2_sa=BSPECI)
-       
+        
+        expand(config['mappeddir']+"{sa_spe1}/{eosam}", sa_spe1=SPECIES1, eosam=["SJ.out.tab"] ),  # !!!!
+        config['prep4mapdir']+"mappping-"+species1+"-ended.txt",
+        expand(config['trimmfqdir']+"{sa_spe2}_trimm_{pair}.fastq.gz", sa_spe2=SPECIES2, pair=PAIRS)
+# TODO: ,expand(config['mappeddir']+"{sa_spe2}/Aligned.out.sam", sa_spe1=SPECIES2)
+        
        
 # https://stackoverflow.com/questions/57028398/how-can-i-run-a-subset-of-my-snakemake-rules-several-times-with-wildcards
 
@@ -123,91 +120,23 @@ rule checkpoint_species1:
         sms = sp1message+'\nSamples:\n'+'\n'.join(dicosp[species1])
     shell: "printf '{params.sms}\n' > {output.finf}"
 
-
 rule mapping_species1:
-    input :
+    input  :   
         t1 = config['trimmfqdir']+"{sa_spe1}_trimm_"+PAIRS[0]+".fastq.gz",
         t2 = config['trimmfqdir']+"{sa_spe1}_trimm_"+PAIRS[1]+".fastq.gz",
-        gtf = config['gtf'][species1] , 
-        chinf = rules.checkpoint_species1.output.finf 
+        gtf = config['gtf'][species1] 
     message : 
-        "  Mapping  {wildcards.sa_spe1}   ::"+species1+"::"
-    output :
-        sj = config['mappeddir']+"{sa_spe1}/SJ.out.tab", 
-        al = config['mappeddir']+"{sa_spe1}/Aligned.out.sam" ,
-        lf = config['mappeddir']+"{sa_spe1}/Log.final.out",
-        lo = config['mappeddir']+"{sa_spe1}/Log.out",
-        lp = config['mappeddir']+"{sa_spe1}/Log.progress.out",
-        rp = config['mappeddir']+"{sa_spe1}/ReadsPerGene.out.tab",
+        "  Mapping  {wildcards.sa_spe1}   ::"+species1+"::" 
+    output : 
+        sjo = config['mappeddir']+"{sa_spe1}/SJ.out.tab",
+        #ad = config['prep4mapdir']+"mappping-"+species1+"-ended.txt"
+        fiu = config['prep4mapdir']+"mappping-rat-ended.txt" 
     params :
         Idir = config['starindexdir'][species1],
         prefix = config['mappeddir']+"{sa_spe1}/",
         sthreads = config['star']['threads'],
         max_mismatches = config['star']['max_mismatches']
+
+    
     shell : 
-          "STAR --runThreadN {params.sthreads} "
-            "--quantMode GeneCounts "
-             "--genomeDir {params.Idir} "
-             "--sjdbGTFfile {input.gtf} "
-             "--readFilesCommand gunzip -c "
-             "--readFilesIn {input.t1},{input.t2} "
-             "--outFilterType BySJout "
-             "--outFilterMultimapNmax 20 "
-             "--alignSJoverhangMin 8 "
-             "--alignSJDBoverhangMin 1 "
-              "--outFilterMismatchNmax {params.max_mismatches} "
-             "--outFilterMismatchNoverReadLmax 0.04 "
-             "--alignIntronMin 20 "
-             "--alignIntronMax 1000000 "
-             "--alignMatesGapMax 1000000 " 
-             "--outFileNamePrefix {params.prefix} "
-
-rule checkpoint_bspeci:
-    input :
-        expand(config['mappeddir']+"{sa_spe1}/Log.final.out", sa_spe1=SPECIES1), 
-        # speciesONE must be done
-        qcreport = rules.multiqc.output.qcreport
-    message : sp2message
-    output :
-        finf = config['prep4mapdir']+"infosspecies-"+bspeci+".txt"
-    params:
-        sms = sp2message+'\nSamples:\n'+'\n'.join(dicosp[bspeci])
-    shell: "printf '{params.sms}\n' > {output.finf}"
-
-rule bspeciesmap:
-        input :
-            bt1 = config['trimmfqdir']+"{spe2_sa}_trimm_"+PAIRS[0]+".fastq.gz",
-            bt2 = config['trimmfqdir']+"{spe2_sa}_trimm_"+PAIRS[1]+".fastq.gz",
-            bgtf = config['gtf'][bspeci],
-            bchinf = rules.checkpoint_bspeci.output.finf
-        message :
-            "  mapping  {wildcards.spe2_sa}   ::"+bspeci+"::"
-        params :
-            bIdir = config['starindexdir'][bspeci],
-            bprefix = config['mappeddir']+"{spe2_sa}/",
-            sthreads = config['star']['threads'],
-            max_mismatches = config['star']['max_mismatches']
-        output :
-            tt = config['prep4mapdir']+"{spe2_sa}/check"
-        shell :
-              "STAR --runThreadN {params.sthreads} "
-                "--quantMode GeneCounts "
-                 "--genomeDir {params.bIdir} "
-                 "--sjdbGTFfile {input.bgtf} "
-                 "--readFilesCommand gunzip -c "
-                 "--readFilesIn {input.bt1},{input.bt2} "
-                 "--outFilterType BySJout "
-                 "--outFilterMultimapNmax 20 "
-                 "--alignSJoverhangMin 8 "
-                 "--alignSJDBoverhangMin 1 "
-                  "--outFilterMismatchNmax {params.max_mismatches} "
-                 "--outFilterMismatchNoverReadLmax 0.04 "
-                 "--alignIntronMin 20 "
-                 "--alignIntronMax 1000000 "
-                 "--alignMatesGapMax 1000000 "
-                 "--outFileNamePrefix {params.bprefix} ; touch {output.tt} "
-
-
-
-
-
+          " touch {output.sjo}"

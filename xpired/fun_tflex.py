@@ -30,25 +30,6 @@ def listtostr_single(strucfile, RUN):
     elif strucfile == 2:
          return "_"+RUN[0] 
 
-def getsamplesNspe(metadatafilename):
-    """
-    input : csv file. Delimiter MUST BE comma
-    output : two lists
-    """
-    delim = ","
-    samples = []
-    species = []
-    with open(metadatafilename, 'r') as f:
-        junkhead = f.readline() # get rid of header
-        content = f.readlines()
-    for l in content:
-        lol = l.strip().split(delim)
-        samples.append(lol[0])
-        species.append(lol[1])
-    return samples, species
-
-
-
 def d2o(afilename, alistspecies):
     """
     input : csv file. Delimiter MUST BE comma

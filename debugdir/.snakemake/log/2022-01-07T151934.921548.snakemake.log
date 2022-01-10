@@ -1,0 +1,45 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job      count    min threads    max threads
+-----  -------  -------------  -------------
+all          1              1              1
+test1        1              1              1
+test2        1              1              1
+total        3              1              1
+
+
+[Fri Jan  7 15:19:35 2022]
+rule test1:
+    input: debugcmd.sh
+    output: test1.txt
+    jobid: 1
+    resources: tmpdir=/tmp
+
+[Fri Jan  7 15:19:35 2022]
+Finished job 1.
+1 of 3 steps (33%) done
+
+[Fri Jan  7 15:19:35 2022]
+rule test2:
+    input: test1.txt
+    output: test2.txt
+    jobid: 2
+    resources: tmpdir=/tmp
+
+[Fri Jan  7 15:19:35 2022]
+Finished job 2.
+2 of 3 steps (67%) done
+
+[Fri Jan  7 15:19:35 2022]
+localrule all:
+    input: debugcmd.sh, test1.txt, test2.txt
+    jobid: 0
+    resources: tmpdir=/tmp
+
+[Fri Jan  7 15:19:35 2022]
+Finished job 0.
+3 of 3 steps (100%) done
+Complete log: /gpfs/home/jgalvis/tflex/debugdir/.snakemake/log/2022-01-07T151934.921548.snakemake.log
