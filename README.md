@@ -68,11 +68,12 @@ gtf : ""
 
 ### Comments about this yaml template:
 * strucfile : is an integer, to set the option about the files names "structure", up to now I have defined two possible options:
-
-   1 --> if {sampleid}\_{pair name}.fastq.gz
-	  examples: `D123546_1.fastq.gz` , `T9_876-sansglu_R1.fastq.gz`
-   2 --> if {sampleid}\_{pair name}_{run}.fastq.gz
-	  example: `T9_876-sansglu_R1_001.fastq.gz` , **where 001 is {run}**
+| option | explanation |
+| ------- | ----------|
+|  1  |  if {sampleid}\_{pair name}.fastq.gz
+	  examples: `D123546_1.fastq.gz` , `T9_876-sansglu_R1.fastq.gz`  |
+|  2  | if {sampleid}\_{pair name}_{run}.fastq.gz
+	  example: `T9_876-sansglu_R1_001.fastq.gz` , **where 001 is {run}**  |
 
   In this way, {pair name} is detected automatically (can be 'R2' or '2' or equivalent).
    Only tested {run} unique, up to now. If two or more "run" values, a new option must be created and configured, or simply use separated run folders. 
