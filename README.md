@@ -227,5 +227,7 @@ to the authors of cited software.
 
 --------------------------------------------
 ####  Authors
-Joha GL , B Dartigues, A Barré.
+Joha GL , B Dartigues.
+
+Many thanks to A Barré for help with Slurm.
 
