@@ -1,4 +1,4 @@
-# Snakemake pipeline for customized raw RNA-seq data pretreatment in cbib bb8 cluster
+# tflex : a Snakemake pipeline for customized raw RNA-seq data pretreatment in cbib bb8 cluster
 
 ## Overview
 
