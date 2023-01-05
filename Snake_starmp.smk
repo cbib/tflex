@@ -4,7 +4,7 @@ import os
 from fun_tflex import *
 
 SAMPLESBYMETADATA, speciesbymetadata = getsamplesNspe(config['metadata'])
-#### -*- TODO: refactor to make fun available from fun_tflex
+
 def pullwildcardsbyopt(strucfile, rawdir):
     """strucfile is fastq file pattern, an integer (choice)"""
     if strucfile == 1:
