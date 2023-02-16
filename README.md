@@ -2,8 +2,7 @@
 
 ## Overview
 
-Pipeline in active development, intended for RNA-seq fastq files quality control, mapping,
-possible to extend to other applications.
+Pipeline in active development, intended for RNA-seq analysis, in our laboratory.
 
 Most of our datasets being paired-end, scripts have been tailored for them.
 
@@ -13,14 +12,13 @@ without the need to rename/relocate them.
 This pipeline must be kept into an intact directory, **DO NOT use it as a working directory**. To clone it : 
 ```
 cd $HOME
-git clone https://github.com/johaGL/tflex
+git clone https://github.com/cbib/tflex
 ```
 Alternatively, you can clone it into another folder, example let DIRSOFTWARE=/gpfs/home/myname/mysoftware/.
 
-Usage : Go to your project `cd \$MYPROJECT` and invoke a specific pipeline by typing `$DIRSOFTWARE/tflex/Snake_...smk`. The best is to do a dryrun before the real run, see below.
+Usage : Go to your project `cd $MYPROJECT` and invoke a specific pipeline by typing `$DIRSOFTWARE/tflex/Snake_...smk`. The best is to do a dryrun before the real run, see below.
  
-**Note for users** : tflex must be only composed of **tools**, but NOT fastq files or any other files proper to your RNA-seq project. For specific needs, _fork_ it and feel free to modify/contribute/suggest.  
-
+----------------------------------------------
 # Developers README:
 
 Pipelines are designed to  be used into a bash script like [this one](https://github.com/johaGL/cocultureProj/blob/e0418b945e01ab9cf0165f41b28d64c35091be34/src1/step1.sh).
@@ -84,9 +82,16 @@ For full instructions about setting a config file see *Users README* section, "M
 ### Running a dryrun
 User is encouraged to perform a dryrun, as it allows to detect errors. 
 
-# Users README:
 
-## Prepare your work
+
+
+-----------------------------------------------
+
+## Users README:
+
+## * Part I * : QC, Mapping, Raw Counts Matrix
+
+## I.1. Prepare your work
 
 * User working directory must be a RNA-seq analysis project located completely outside tflex.
 * Working directory can contain your data and/or results, there is not a mandatory folder structure because in any case, all paths must be defined in configuration `.yaml` file(s).
@@ -214,10 +219,21 @@ Example : [step1.sh](https://github.com/johaGL/cocultureProj/blob/e0418b945e01ab
 Adapt SLURM options to your project. Use same commands as written in your dryrun, make sure your dryrun is clean and that output folders are absent or empty (our pipelines do not overwrite!).
 
 
-
-## Launch definitive script
+## I.2. Launch definitive script
 First make sure all steps above have been sucessful, including the dryrun ! 
 If no **dryrun** errors, congrats! Make sure the **output** folders are empty, because the pipelines will not overwrite, and just go for a cup of coffee after launching `sbatch step1.sh` .  
+
+
+## * Part II * : Downstream analysis (in development)
+
+At this point, often the samples names are not informative, so it is a good practice to change them.
+This implies to update both your metadata, and the matrix columns' names, preferrably with a script (example given in [Rscripts/samplesChange_example.R](https://github.com/cbib/tflex/blob/master/Rscripts/samplesChange_example.R)). 
+
+For all the downstream analysis, see [Rscripts/README_r.md](https://github.com/cbib/tflex/blob/master/Rscripts/README_r.md)).
+In cbib cluster, you must load R. You can do it via module (`module load R/x.x`), or via conda.
+Feel free to contact us if you run into any problem.
+
+
 
 ----------------------------------------
 Acknowledgments:
