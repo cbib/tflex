@@ -22,7 +22,8 @@ Usage : Go to your project `cd $MYPROJECT` and invoke a specific pipeline by typ
 ----------------------------------------------
 # Developers README:
 
-Pipelines are designed to  be used into a bash script like [this one](https://github.com/johaGL/cocultureProj/blob/e0418b945e01ab9cf0165f41b28d64c35091be34/src1/step1.sh).
+When two or more species are involved, conflicts arise. That is the reason why this snakemake is divided in parts. 
+Each part is launched via bash scripts (making use of Slurm), see [cmd_examples/](cmd_examples/)
 
 A yaml configuration file example is [configRat.yaml](https://github.com/johaGL/cocultureProj/blob/master/src1/configRat.yaml).
 
@@ -239,9 +240,9 @@ Feel free to contact us if you run into any problem.
 --------------------------------------
 #### Improved .sh files (with Slurm)
 
-- (step)[cmd_examples/step1.sh]
-- (step2)[cmd_examples/step2.sh]
-- (step2)[cmd_examples/step3.sh]
+- [step1](cmd_examples/step1.sh)
+- [step2](cmd_examples/step2.sh)
+- [step2](cmd_examples/step3.sh)
 
 
 ----------------------------------------
