@@ -54,7 +54,7 @@ getcountsonespecies <- function(mappeddir, sampleList, filestarcount){
 }
 
 ## execution
-if (str_ends(configfn, "yaml") && str_ends(outfn, "tsv")){
+if ((str_ends(configfn, "yaml") | str_ends(configfn, "yml")) && str_ends(outfn, "tsv")){
   resu <- getcountsonespecies(mappeddir, samplesVector, filestarcount)
   write.table(resu, outfn, col.names = T, row.names = F, sep='\t')
 }else{print("bad files in args, did you inversed ?")}
