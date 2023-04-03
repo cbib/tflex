@@ -17,11 +17,13 @@ git clone https://github.com/cbib/tflex
 Alternatively, you can clone it into another folder, example let DIRSOFTWARE=/gpfs/home/myname/mysoftware/.
 
 Usage : Go to your project `cd $MYPROJECT` and invoke a specific pipeline by typing `$DIRSOFTWARE/tflex/Snake_...smk`. The best is to do a dryrun before the real run, see below.
+
  
 ----------------------------------------------
 # Developers README:
 
-Pipelines are designed to  be used into a bash script like [this one](https://github.com/johaGL/cocultureProj/blob/e0418b945e01ab9cf0165f41b28d64c35091be34/src1/step1.sh).
+When two or more species are involved, conflicts arise. That is the reason why this snakemake is divided in parts. 
+Each part is launched via bash scripts (making use of Slurm), see [cmd_examples/](cmd_examples/)
 
 A yaml configuration file example is [configRat.yaml](https://github.com/johaGL/cocultureProj/blob/master/src1/configRat.yaml).
 
@@ -120,6 +122,8 @@ $ tree -L 2 $MYPROJECT
 ```
 
 An example of such "project" can be seen [here](https://github.com/johaGL/cocultureProj/). 
+But improved (2023) `.sh` files are available at the end of this readme.
+
 Following steps will help you to prepare and obtain a folder structure as shown above.
   * A. Create and save your metadata csv file(s)
   * B. Create the yaml configuration file(s):
@@ -211,10 +215,10 @@ Remember:
 This is **STRONGLY** recomended, as it will not run for real 
 but it will show the steps that will be executed and detect any problems. 
 As no full calculations will be executed, it does not need sbatch.
-Example: [dryrunSteps1_2.sh](https://github.com/johaGL/cocultureProj/blob/master/src1/dryrunSteps1_2.sh) 
+Example: [dryrunSteps1_2.sh](cmd_examples/dryrunSteps1_2.sh) 
 
 ### D. write definitive script(s)
-Example : [step1.sh](https://github.com/johaGL/cocultureProj/blob/e0418b945e01ab9cf0165f41b28d64c35091be34/src1/step1.sh)
+Example : [step1.sh](cmd_examples/step1.sh)
 
 Adapt SLURM options to your project. Use same commands as written in your dryrun, make sure your dryrun is clean and that output folders are absent or empty (our pipelines do not overwrite!).
 
@@ -233,6 +237,12 @@ For all the downstream analysis, see [Rscripts/README_r.md](https://github.com/c
 In cbib cluster, you must load R. You can do it via module (`module load R/x.x`), or via conda.
 Feel free to contact us if you run into any problem.
 
+--------------------------------------
+#### Improved .sh files (with Slurm)
+
+- [step1](cmd_examples/step1.sh)
+- [step2](cmd_examples/step2.sh)
+- [step2](cmd_examples/step3.sh)
 
 
 ----------------------------------------
@@ -246,4 +256,5 @@ to the authors of cited software.
 Joha GL , B Dartigues.
 
 Many thanks to A Barré for help with Slurm.
+
 

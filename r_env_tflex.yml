@@ -1,0 +1,41 @@
+name: r_env_tflex
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base=4.2.2
+  - r-tidyverse
+  - r-dplyr
+  - r-reshape2
+  - conda-forge::r-rcolorbrewer
+  - conda-forge::r-forcats
+  - conda-forge::r-devtools
+  - conda-forge::r-rmarkdown
+  - r-biocmanager
+  - r-gprofiler2
+  - r-MASS
+  - r-ggthemes
+  - r-gridExtra
+  - r-ggforce
+  - r-extrafont
+  - r-colorBlindness
+  - r-patchwork
+  - r-cowplot
+  - r-htmlwidgets
+  - r-scales
+  - r-data.tree
+  - r-ggraph
+  - r-igraph
+  - r-viridis
+  - r-msigdbr
+  - r-networkD3
+  - r-DT
+  - r-circlize
+  - r-kableextra
+  - r-heatmap3
+  - bioconductor-DESeq2
+  - bioconductor-complexheatmap
+  - bioconductor-fgsea
+  - bioconda::bioconductor-enrichplot
+  - bioconda::bioconductor-clusterprofiler  
