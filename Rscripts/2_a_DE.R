@@ -4,6 +4,9 @@
 # Initial verification, creates output directories,
 # checks biotypes, and performs multivariate and univariate analyses
 # OUTPUT: multiple plots, and saves dds object into rds/ folder
+# usage:
+#   Rscript $DIRTFLEX/Rscripts/2_a_DE.R config_postprocess.yml $DIRTFLEX/ 
+
 # johaGL 2022
 library(tidyverse)
 library(FactoMineR)
@@ -26,10 +29,13 @@ shortname <- gv$shortname
 
 SPECIESensmbldsetname <- gv$SPECIESensmbldsetname
 samplestodrop <- gv$samplestodrop
+
+source(paste0(args[2], "Rscripts/func.R"))
+
  
 # START
 setwd(gv$mywdir)
-source(paste0(gv$mywdir,"scr2/func.R")) 
+
 o_dir <- paste0(gv$mywdir,"results_",outname,"/")
 resdirs <- getoutputdirs(outer=o_dir)
 rds_dir = resdirs[1]; tabl_dir = resdirs[2]; plo_dir = resdirs[3] 

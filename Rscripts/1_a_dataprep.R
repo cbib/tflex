@@ -6,13 +6,18 @@
 # OUTPUT:  saves dds object into rds/ folder
 # note : obj@row_data may have symbol_unique but empty external_gene_name: 
 #                      because when symbol retrieved by ncbi , not biomart. 
+
+# usage : Rscript $DIRTFLEX/Rscripts/1_a_dataprep.R config_postprocess.yml $DIRTFLEX
+
 # johaGL 2022
 library(tidyverse)
 library(biomaRt)
 library(patchwork)
 library(RColorBrewer)
 
+
 args = commandArgs(trailingOnly=TRUE)
+
 gv <- yaml::read_yaml(args[1])
 
 metadatafn <- gv$metadatafile
@@ -28,9 +33,13 @@ SPECIESensmbldsetname <- gv$SPECIESensmbldsetname
 nb_bt <- gv$nb_bt # min nb of genes req for a biotype, for biotype to be displayed
 samplestodrop <- gv$samplestodrop
 typeRNAs <- gv$typeRNAs
+
+
+source(paste0(args[2], "Rscripts/func.R"))
+
 # START
 setwd(gv$mywdir)
-source(paste0(gv$mywdir,"scr2/func.R")) 
+
 o_dir <- paste0(gv$mywdir,"results_",outname,"/")
 resdirs <- getoutputdirs(outer=o_dir)
 rds_dir = resdirs[1]; tabl_dir = resdirs[2]; plo_dir = resdirs[3] 
@@ -55,7 +64,9 @@ rowdatadf <- getfullRowsSymbols(rawmat,equi_id, bm_sp) # precursor for @row_data
 
 # ----------- further query, omit dot and digits after-----------------------------
 if (equi_id=="ensembl_gene_id_version"){
-  rowdatadf <- furtherRowsSymbols(rowdatadf, equi_id, bm_sp)
+  rowdatadf_savedesp <- furtherRowsSymbols(rowdatadf, equi_id, bm_sp)
+  rowdatadf = rowdatadf_savedesp[[1]]
+  savedesperate = rowdatadf_savedesp[[2]]
   write.csv(data.frame("searchingfurther_ensembl_gene_id"=savedesperate),
             paste0(tabl_dir,"querybiomartsuppl.csv"), row.names=FALSE)
   } else if (equi_id=="ensembl_gene_id"){
@@ -145,14 +156,6 @@ saveRDS(myobj,
          paste0(rds_dir, "readyData",outname,".rds") )
 
 
-##################### plot biomart and OUR data  ####################### 
-colnames(myobj@row_data)
-titleX <- paste("Biotypes in whole", outname, "dataset")
-X <- do_biotype_plot(myobj@row_data$gene_biotype, nb_bt, titleX )
-
-pdf(paste0(plo_dir,"Biotypes_full", outname, ".pdf"), height= 4, width=6)
-X 
-dev.off()
 
 
 

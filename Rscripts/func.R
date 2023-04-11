@@ -149,7 +149,7 @@ furtherRowsSymbols <- function(rowdatadf, equi_id, bm_sp){
     TRUE ~ external_gene_name
   ))
   rowdatadf$symbol_unique <- make.unique(rowdatadf$symbol_unique)
-  return(rowdatadf)
+  return(list(rowdatadf, savedesperate))
 }
 
 do_biotype_plot <- function(gene_biotype, nb_bt, mytitle){
@@ -501,14 +501,6 @@ doboxplot3PC_bicond <- function(pca.res, metadata, TWOCOLORS,mytitle){
   return(agg)
 }
 
-twocond_colorpick <- function(shortname){
-  print("twocond_colorpick : outputs a 2 length vector, cold color first")
-  colpicker <- list("mouse"=c("cadetblue","sienna2"), 
-                    "rat"=c("lightblue4","salmon3"),
-                     "human"=c("palegreen4","orange"))
-  CHOSENCOLORS <- colpicker[[shortname]] 
-  return(CHOSENCOLORS)
-}
 
 plotPCAvarswithsign <- function(res.pca, mypval, metadata,
                                 CHOSENCOLORS, tooextreme=c(""), invcol=FALSE){

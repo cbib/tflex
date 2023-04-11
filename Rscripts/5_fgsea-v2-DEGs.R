@@ -29,9 +29,11 @@ print(paste("internal list fullspeciesname, key invoked by 'shortname' ! :",
 fullspeciesname <- list("mouse"="Mus musculus", "rat"="Rattus norvegicus",
                     "human"="Homo sapiens")
 
+source(paste0(args[2], "Rscripts/func.R"))
+
 # START
 setwd(gv$mywdir)
-source(paste0(gv$mywdir,"scr2/func.R")) 
+
 o_dir <- paste0(gv$mywdir,"results_",outname,"/")
 resdirs <- getoutputdirs(outer=o_dir)
 rds_dir = resdirs[1]; tabl_dir = resdirs[2]; plo_dir = resdirs[3] 
