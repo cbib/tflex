@@ -27,6 +27,7 @@ samplestodrop <- gv$samplestodrop
 cutoffs <- gv$cutoffsvarspvals
 maxncontrib <- gv$maxncontrib # too extreme vars (genes) to exclude from biplot
 dobiplots <- gv$dobiplots_bypval_bycond
+user_color_pal <- gv$color_palette
 
 source(paste0(args[2], "Rscripts/func.R"))
 
@@ -35,9 +36,9 @@ source(paste0(args[2], "Rscripts/func.R"))
 #autopicker colors:
 
 cond_colorpick <- function(shortname){
+  # deprecated
   print("twocond_colorpick : outputs a 8 length vector, different palettes by species")
-  # colpicker <- list("mouse"=c("cadetblue","sienna2"), 
-  #                   "rat"=c("lightblue4","salmon3"),
+  # colpicker <- list( "rat"=c("lightblue4","salmon3"),
   #                    "human"=c("palegreen4","orange"))
   colpicker <- list("mouse"=brewer.pal(9, "Blues")[1:9],
                     "rat"=brewer.pal(9, "Greys")[1:19],
@@ -46,7 +47,18 @@ cond_colorpick <- function(shortname){
   return(rev(CHOSENCOLORS))
 }
 
-CHOSENCOLORS <- cond_colorpick(shortname)[1:length(conditionLEVELS)] 
+
+cond_colorpal <- function(conditionLEVELS, user_color_pal){
+  if (is.null(user_color_pal)){
+    chosencolors = brewer.pal(length(conditionLEVELS), "Dark2")
+  }else{
+    chosencolors = brewer.pal(length(conditionLEVELS), user_color_pal)
+  }
+  return(chosencolors)
+}
+
+#CHOSENCOLORS <- cond_colorpick(shortname)[1:length(conditionLEVELS)] 
+CHOSENCOLORS <- cond_colorpal(conditionLEVELS, user_color_pal)
 names(CHOSENCOLORS) <- conditionLEVELS
 
 setwd(gv$mywdir)

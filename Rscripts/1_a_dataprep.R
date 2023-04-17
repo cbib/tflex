@@ -34,7 +34,6 @@ nb_bt <- gv$nb_bt # min nb of genes req for a biotype, for biotype to be display
 samplestodrop <- gv$samplestodrop
 typeRNAs <- gv$typeRNAs
 
-
 source(paste0(args[2], "Rscripts/func.R"))
 
 # START
