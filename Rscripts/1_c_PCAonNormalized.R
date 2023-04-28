@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
-# # Automated to run from terminal, see:
-#   * README_scr2.md *
+# # Automated to run from terminal
+
 # REQUIRES : results from 1_....R
 # performs PCA on cpm, hierarchical clust on cpm 
 # OUTPUT:  plots, and saves  objects into rds/ folder
@@ -23,9 +23,12 @@ SPECIESensmbldsetname <- gv$SPECIESensmbldsetname
 samplestodrop <- gv$samplestodrop
 typeRNAs <- gv$typeRNAs # a list of biotypes
 print(typeRNAs)
+
+source(paste0(args[2], "Rscripts/func.R"))
+
 # START
 setwd(gv$mywdir)
-source(paste0(gv$mywdir,"scr2/func.R")) 
+
 o_dir <- paste0(gv$mywdir,"results_",outname,"/")
 resdirs <- getoutputdirs(outer=o_dir)
 rds_dir = resdirs[1]; tabl_dir = resdirs[2]; plo_dir = resdirs[3] 
