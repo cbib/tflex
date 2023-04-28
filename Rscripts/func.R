@@ -88,7 +88,7 @@ print_warnings_rawcdfANDmetadata <- function(rawc, metadata){
     print("ERROR, sample names in metadata and rawcounts do not match ")}
 }
 
-countsdftomatrix <- function(countsdf){
+countsdftomatrix <- function(countsdf, min_count_accept=0, min_sample_min_count=3){
   # df to true matrix, NA replaced by zero, all-zero rows excluded.
   print("countsdftomatrix RETURNS: matrix, and drops 'zeroes-all rows'")
   print(paste("function countdftomatrix assumes:",
@@ -99,6 +99,13 @@ countsdftomatrix <- function(countsdf){
   raw.mat[is.na(raw.mat)] <- 0 # replace NA values
   tokeep <- apply(raw.mat, 1, function(x) sum(x) > 0)
   raw.mat <- raw.mat[tokeep, ] # reject zeroes rows
+  if (min_count_accept != 0){
+    # get rid of low counts rows
+    tokeep <- apply(raw.mat, 1, function(x) {
+      # here sum in reality counts how many TRUE over or equal min_count_accept
+      sum(x >= min_count_accept) >= min_sample_min_count
+      }  )
+  }
   print(dim(raw.mat))
   outmat <- array(unlist(raw.mat), dim=dim(raw.mat),
                dimnames=list(rownames(raw.mat),colnames(raw.mat)))
@@ -149,7 +156,7 @@ furtherRowsSymbols <- function(rowdatadf, equi_id, bm_sp){
     TRUE ~ external_gene_name
   ))
   rowdatadf$symbol_unique <- make.unique(rowdatadf$symbol_unique)
-  return(rowdatadf)
+  return(list(rowdatadf, savedesperate))
 }
 
 do_biotype_plot <- function(gene_biotype, nb_bt, mytitle){
@@ -501,14 +508,6 @@ doboxplot3PC_bicond <- function(pca.res, metadata, TWOCOLORS,mytitle){
   return(agg)
 }
 
-twocond_colorpick <- function(shortname){
-  print("twocond_colorpick : outputs a 2 length vector, cold color first")
-  colpicker <- list("mouse"=c("cadetblue","sienna2"), 
-                    "rat"=c("lightblue4","salmon3"),
-                     "human"=c("palegreen4","orange"))
-  CHOSENCOLORS <- colpicker[[shortname]] 
-  return(CHOSENCOLORS)
-}
 
 plotPCAvarswithsign <- function(res.pca, mypval, metadata,
                                 CHOSENCOLORS, tooextreme=c(""), invcol=FALSE){

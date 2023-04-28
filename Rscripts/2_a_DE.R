@@ -4,6 +4,9 @@
 # Initial verification, creates output directories,
 # checks biotypes, and performs multivariate and univariate analyses
 # OUTPUT: multiple plots, and saves dds object into rds/ folder
+# usage:
+#   Rscript $DIRTFLEX/Rscripts/2_a_DE.R config_postprocess.yml $DIRTFLEX/ 
+
 # johaGL 2022
 library(tidyverse)
 library(FactoMineR)
@@ -26,10 +29,13 @@ shortname <- gv$shortname
 
 SPECIESensmbldsetname <- gv$SPECIESensmbldsetname
 samplestodrop <- gv$samplestodrop
+
+source(paste0(args[2], "Rscripts/func.R"))
+
  
 # START
 setwd(gv$mywdir)
-source(paste0(gv$mywdir,"scr2/func.R")) 
+
 o_dir <- paste0(gv$mywdir,"results_",outname,"/")
 resdirs <- getoutputdirs(outer=o_dir)
 rds_dir = resdirs[1]; tabl_dir = resdirs[2]; plo_dir = resdirs[3] 
@@ -40,15 +46,16 @@ strcontrast <- paste(reqcontrast[2:3],collapse="_vs_")
 
 print(objecthasthiscontrast)
 if (is.null(objecthasthiscontrast)){  
+  print("using dds object already saved")
   dds_finame <-  paste0(rds_dir, "ddsObj_",strcontrast,"_",outname,".rds")
-  readydafile <- paste0(rds_dir, "readyData",outname,".rds")
   plotsmultirlog <- TRUE
 }else{
   dds_finame <- objecthasthiscontrast
-  readydafile <- str_replace(dds_finame, paste0("ddsObj_",strcontrast,"_"),
-                               "readyData")
   plotsmultirlog <- FALSE
 }
+
+readydafile <- paste0(rds_dir, "readyData",outname,".rds")
+
 print(dds_finame); print(readydafile)
 
 # ----------------------- open 'readyData' .rds object  ---------------------
@@ -61,7 +68,7 @@ if(all(rownames(myobj@rawq)==myobj@row_data$symbol_unique)){
 # ---------------- Univariate simple contrast (DESeq2) -------------------
 print("Performing only Univariate simple contrast, see README_scr2.md")
 print("(LEVELS and nb libraries determine what you get: resultsNames(dds)")
-cat('\n  * * * 1_initiotodds.R runs univariate analysis, or opens existing rds',
+cat('\n  * * * runs univariate analysis, or opens existing rds',
     '(I do not overwrite) * * * \n')
 
 if (!file.exists(dds_finame )){

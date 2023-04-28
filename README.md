@@ -91,6 +91,7 @@ User is encouraged to perform a dryrun, as it allows to detect errors.
 
 ## Users README:
 
+
 ## * Part I * : QC, Mapping, Raw Counts Matrix
 
 ## I.1. Prepare your work
@@ -230,15 +231,94 @@ If no **dryrun** errors, congrats! Make sure the **output** folders are empty, b
 
 ## * Part II * : Downstream analysis (in development)
 
-At this point, often the samples names are not informative, so it is a good practice to change them.
-This implies to update both your metadata, and the matrix columns' names, preferrably with a script (example given in [Rscripts/samplesChange_example.R](https://github.com/cbib/tflex/blob/master/Rscripts/samplesChange_example.R)). 
+create the conda environment : 
+```
+conda env create -f r_env_tflex.yml
+```
 
-For all the downstream analysis, see [Rscripts/README_r.md](https://github.com/cbib/tflex/blob/master/Rscripts/README_r.md)).
-In cbib cluster, you must load R. You can do it via module (`module load R/x.x`), or via conda.
-Feel free to contact us if you run into any problem.
+For all the downstream analysis, see [Rscripts/](https://github.com/cbib/tflex/blob/master/Rscripts/)).
+
+
+1. In your project folder, create scr2/ folder and put inside:
+ - the .yml file(s) such the one shown at the end of this section "Example yml downstream". Each performs one comparison (or seeks for the existing dds object that has the comparison inside, by using the optional parameter `filehasthiscontrast` )
+ 
+2. In cbib cluster activate the `r_env_tflex` environment. 
+
+3. Launch by comparison: 
+```
+Rscript $TFLEX_SCRIPT $MY_YML $LOCATION_TFLEX 
+```
+
+Use the scripts in Rscripts in sequential order. 
+
+
+"Example yml downstream"
+
+Here two different yml, each for one comparison.
+
+- the dds object does not exists, I launch the `comparison_MvsV.yml` : 
+```
+mywdir : "~/bulk202303_TD/myelin_202303/" 
+metadatafile : "raw_counts/metadata_myelin.csv" 
+countsfile : "raw_counts/rawcounts_myelin.tsv"
+
+conditionLEVELS : [ "Vehicle", "Pellets" , "Myelin" ] # "control" here first
+requiredcontrast : ['condition','Myelin', 'Vehicle' ] # control goes last
+outname :  "mpv"
+shortname : "human"
+SPECIESensmbldsetname : "hsapiens_gene_ensembl"
+equivalentid : "ensembl_gene_id_version"
+# note: if ensembl ids have a dot '.' equivalentid : "ensembl_.._version"
+
+samplestodrop : 
+  - "Vehicle_24h-3"
+
+nb_bt : 100 #min nb of genes req for a biotype, for biotype to be displayed
+
+### vars  in 2_ddstotabplots.R
+trustedcolumn : "symbol_unique" 
+# for tables "top" (tsv files):
+absLFCcutoff : 0
+sigcutoff : 0.05
+
+# cutoffs for volcano labels
+aLFClab : 0.5
+pjlab : 0.05
+labelsinvolcano : True
+
+# PCA related 
+maxncontrib : 5
+#cutoffsvarspvals : [0.05, 0.01, 0.005,0.001, 0.0005, 0.0001]
+dobiplots_bypval_bycond : False
+```
+
+- the dds object already exists (contrast is different but contained in the previously generated dds) `comparison_PvsV.yml`:
+```
+mywdir : "~/bulk202303_TD/myelin_202303/" 
+metadatafile : "raw_counts/metadata_myelin.csv" 
+countsfile : "raw_counts/rawcounts_myelin.tsv"
+
+conditionLEVELS : [ "Vehicle", "Pellets" , "Myelin" ] # "control" here first
+requiredcontrast : ['condition','Pellets', 'Vehicle' ] # control goes last
+objecthasthiscontrast : results_mpv/rds/ddsObj_Myelin_vs_Vehicle_mpv.rds
+outname :  "mpv"
+shortname : "human"
+SPECIESensmbldsetname : "hsapiens_gene_ensembl"
+equivalentid : "ensembl_gene_id_version"
+# note: if ensembl ids have a dot '.' equivalentid : "ensembl_.._version"
+
+nb_bt : 100 #min nb of genes req for a biotype, for biotype to be displayed
+
+### vars  in 2_ddstotabplots.R
+trustedcolumn : "symbol_unique" 
+# for tables "top" (tsv files):
+absLFCcutoff : 0
+sigcutoff : 0.05
+
+```
 
 --------------------------------------
-#### Improved .sh files (with Slurm)
+#### Improved .sh files (with Slurm)  for steps QC, trimming, mapping
 
 - [step1](cmd_examples/step1.sh)
 - [step2](cmd_examples/step2.sh)

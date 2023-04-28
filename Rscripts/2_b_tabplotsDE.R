@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
-# # Automated to run from terminal, see:
-#   * README_scr2.md *
+# # Automated to run from terminal, similar to 2_a_DE.R
+
 library(tidyverse)
 library(DESeq2)
 library(pheatmap)
@@ -29,10 +29,11 @@ sigcutoff <- gv$sigcutoff
 aLFClab <- gv$aLFClab 
 pjlab <- gv$pjlab 
 
+source(paste0(args[2], "Rscripts/func.R"))
 
 # START
 setwd(gv$mywdir)
-source(paste0(gv$mywdir,"scr2/func.R")) 
+
 o_dir <- paste0(gv$mywdir,"results_",outname,"/")
 resdirs <- getoutputdirs(outer=o_dir)
 rds_dir = resdirs[1]; tabl_dir = resdirs[2]; plo_dir = resdirs[3] 
@@ -45,12 +46,12 @@ if (trustedcolumn != 'symbol_unique'){
 print(objecthasthiscontrast)
 if (is.null(objecthasthiscontrast)){  
   dds_finame <-  paste0(rds_dir, "ddsObj_",strcontrast,"_",outname,".rds")
-  readydafile <- paste0(rds_dir, "readyData",outname,".rds")
 }else{
   dds_finame <- objecthasthiscontrast
-  readydafile <- str_replace(dds_finame, paste0("ddsObj_",strcontrast,"_"),
-                             "readyData")
+
 }
+readydafile <- paste0(rds_dir, "readyData",outname,".rds")
+
 print(dds_finame); print(readydafile)
 
 # ------------------- Open saved dds object rds, doing advanced plots--------------------
