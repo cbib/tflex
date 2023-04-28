@@ -46,12 +46,12 @@ if (trustedcolumn != 'symbol_unique'){
 print(objecthasthiscontrast)
 if (is.null(objecthasthiscontrast)){  
   dds_finame <-  paste0(rds_dir, "ddsObj_",strcontrast,"_",outname,".rds")
-  readydafile <- paste0(rds_dir, "readyData",outname,".rds")
 }else{
   dds_finame <- objecthasthiscontrast
-  readydafile <- str_replace(dds_finame, paste0("ddsObj_",strcontrast,"_"),
-                             "readyData")
+
 }
+readydafile <- paste0(rds_dir, "readyData",outname,".rds")
+
 print(dds_finame); print(readydafile)
 
 # ------------------- Open saved dds object rds, doing advanced plots--------------------

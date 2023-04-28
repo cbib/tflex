@@ -48,14 +48,14 @@ print(objecthasthiscontrast)
 if (is.null(objecthasthiscontrast)){  
   print("using dds object already saved")
   dds_finame <-  paste0(rds_dir, "ddsObj_",strcontrast,"_",outname,".rds")
-  readydafile <- paste0(rds_dir, "readyData",outname,".rds")
   plotsmultirlog <- TRUE
 }else{
   dds_finame <- objecthasthiscontrast
-  readydafile <- str_replace(dds_finame, paste0("ddsObj_",strcontrast,"_"),
-                               "readyData")
   plotsmultirlog <- FALSE
 }
+
+readydafile <- paste0(rds_dir, "readyData",outname,".rds")
+
 print(dds_finame); print(readydafile)
 
 # ----------------------- open 'readyData' .rds object  ---------------------
@@ -68,7 +68,7 @@ if(all(rownames(myobj@rawq)==myobj@row_data$symbol_unique)){
 # ---------------- Univariate simple contrast (DESeq2) -------------------
 print("Performing only Univariate simple contrast, see README_scr2.md")
 print("(LEVELS and nb libraries determine what you get: resultsNames(dds)")
-cat('\n  * * * 1_initiotodds.R runs univariate analysis, or opens existing rds',
+cat('\n  * * * runs univariate analysis, or opens existing rds',
     '(I do not overwrite) * * * \n')
 
 if (!file.exists(dds_finame )){

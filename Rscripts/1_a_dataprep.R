@@ -34,6 +34,9 @@ nb_bt <- gv$nb_bt # min nb of genes req for a biotype, for biotype to be display
 samplestodrop <- gv$samplestodrop
 typeRNAs <- gv$typeRNAs
 
+min_count_accept_u = 10
+min_sample_min_count_u = 3
+
 source(paste0(args[2], "Rscripts/func.R"))
 
 # START
@@ -58,7 +61,8 @@ bm_sp <- readRDS(paste0(gv$mywdir, "biomart_db/bm_",shortname,".rds"))
 print("")
 ############## matrix cross with biomart , then  rnaexp object   ##############
 
-rawmat <- countsdftomatrix(rawc)
+rawmat <- countsdftomatrix(rawc, min_count_accept=min_count_accept_u, 
+                           min_sample_min_count=min_sample_min_count_u)
 rowdatadf <- getfullRowsSymbols(rawmat,equi_id, bm_sp) # precursor for @row_data
 
 # ----------- further query, omit dot and digits after-----------------------------

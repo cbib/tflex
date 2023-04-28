@@ -119,7 +119,7 @@ for (kk in chosencollections){
   paplo <- paths4plot(fgseaRes, 10)
   pdffin <- paste0(plo_dir,"fgsea-",version,"-",kk,"_",strcontrast,"_",outname,".pdf") 
   pdf(pdffin, width=13, height=5)
-  plotGseaTable(msigdbr_list[c(paplo$up,rev(paplo$down))],
-                veclg, fgseaRes)
+  print(plotGseaTable(msigdbr_list[c(paplo$up,rev(paplo$down))],
+                veclg, fgseaRes))
   dev.off()
 }
