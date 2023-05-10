@@ -322,7 +322,7 @@ sigcutoff : 0.05
 
 - [step1](cmd_examples/step1.sh)
 - [step2](cmd_examples/step2.sh)
-- [step2](cmd_examples/step3.sh)
+- [step3](cmd_examples/step3.sh)
 
 
 ----------------------------------------
