@@ -105,6 +105,7 @@ countsdftomatrix <- function(countsdf, min_count_accept=0, min_sample_min_count=
       # here sum in reality counts how many TRUE over or equal min_count_accept
       sum(x >= min_count_accept) >= min_sample_min_count
       }  )
+    raw.mat <- raw.mat[tokeep, ]
   }
   print(dim(raw.mat))
   outmat <- array(unlist(raw.mat), dim=dim(raw.mat),
